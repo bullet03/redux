@@ -6,7 +6,20 @@
 ___________________________________________________________________________________________________
 Redux
 
+- midleware (философское) - промежуточное ПО/посредник
+- декоратор storeEnhancer - функция, которая принимает оригинальный createStore и возвращает отдекорированный createStore
+- createStore - функция, которая принимает первоначальный state (preLoaded) и логику его изменения (reducer)
+- compose - функция, которая принимает в качестве параметров соединяемые функции. Возвращает функцию, в которой результат вызова одной из функций становится параметром для другой, и так до бесконечности. Финальный результат вызова должен быть возвращен
 
+- applyMiddleWare структура (3 уровня вложенности): 
+  - applyMiddleWare принимает конструкторы midleware, а возвращает decoratedcreateStore (enhancer)
+  - decoratedcreateStore принимается reducer, preloadedState, а возвращается отдекарированный store (содержит отдекорированный dispatch)
+  - отдекарированный store содержит отдекорированный dispatch
+- applyMiddleWare логика:
+  Создается store => Вызываются конструкторы midelwares => создаются объекты midlewares => через compose midlewares связываются между собой в chain => на выход созданной chain подается dispatch => на выходе получится отдекорированный dispatch => в созданный store вставляем отдекорированный dispatch => возвращаем отдекорированный store
+- bindActionCreator - нужен для связывания dispatch и actionCreator. Возвращаем функцию, внтури которой происходит связывание. updateCount = bindActionCreator(actionCreator, dispatch) => later updateCount() => это вызовет связанный dispatch => dispatch(actionCreator.apply(this, args))
+- bindActionCreators - для связывания dispatch и множества actionCreator. Множества actionCreator представлено не в виде [], Set, Map, а виде объекта, поэтому наружу тоже возвращается объект со связанными actionCreator
+  combineReducers -
 ___________________________________________________________________________________________________
 
 RTK (Redux tool kit)
