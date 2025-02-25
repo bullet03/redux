@@ -165,3 +165,17 @@ const getCachedImg = weakRefCache(fetchImg);
 - forEach для map/set
 - Symbol.for - глобальные символы
 - Сервис (service) - набор взаимосвязанного кода (чаще всего выраженного через модули), решающий общую задачу (единый уровень абстракции), предоставляющий интерфейс для этого взаимодействия
+
+```
+action                   actionCreator                    createAction
+{                        (type, payload) => {             (type, prepareAction) => 
+  type: string             type: string                     actionCreator плюс 
+  payload: any             payload: any                     actionCreator.type,
+}                          meta: any                        actionCreator.toString(),
+                           error: any                       actionCreator.match()
+                         }
+```
+- actionCreator - это идея, этой функции нет в виде API rtk/redux. Это удобная фабрика по созданию actions. Поля type, payload - признаны всеми, поля meta, error - для служебных целей rtk, но никто не запрещает использовать их программисту. Программист сам определеяет способ их добавления (дополнительными параметрами в actionCreator, после создания action записыывать отдельными свойствами)
+- createAction - декоратор actionCreator с binded type. Польза видна при большом количестве actions, позволяя избегать большого количества boilerplate (образуется при объявлении action constants, функций actionCreator). Суть декорирования помогает в дальнейшей работе внутренней логики rtk 
+- prepareAction - callBack, возврашающий объект {payload, meta, error}. Этот объект потом сольётся с объектом type
+- builder - паттерн, который позволяет собрать из маленьких частей большую сущность. Отдельные маленькие части собираются путем вызова отдельных методов builder. Собранные маленькие части в builder надо где-то сохранять!!! пока не вызвали метод build. Маленькие методы лучше чейнить. После вызова финализирующего метода build чейна не будет
