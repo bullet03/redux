@@ -179,3 +179,13 @@ action                   actionCreator                    createAction
 - createAction - декоратор actionCreator с binded type. Польза видна при большом количестве actions, позволяя избегать большого количества boilerplate (образуется при объявлении action constants, функций actionCreator). Суть декорирования помогает в дальнейшей работе внутренней логики rtk 
 - prepareAction - callBack, возврашающий объект {payload, meta, error}. Этот объект потом сольётся с объектом type
 - builder - паттерн, который позволяет собрать из маленьких частей большую сущность. Отдельные маленькие части собираются путем вызова отдельных методов builder. Собранные маленькие части в builder надо где-то сохранять!!! пока не вызвали метод build. Маленькие методы лучше чейнить. После вызова финализирующего метода build чейна не будет
+________________________________________________________________________________________________________________________
+- сreateReducer - функция, которая создаёт reducer, принимает initialState и callback, первым параметром которого будет builder. В отличие от redux в rtk initialState обязателен (избавляет от багов reducer)
+- initialState/fallbackState/default - обязательное первоначальное состояние необходимое для работы reducer, preloadedState/not default - заранее заданное пользовательское состояние, с которым создаётся store, опциональное первоначальное состояние
+- если обычный reducer представляет большой switchCase, то createReducer этот switchCase рзабивает на набор методов (addCase, addMatcher, addDefaultCase). Эти методы доступны в builder
+  - addCase один action -> один caseReduсer
+  - addMatcher несколько action -> один caseReduсer
+  - addDefaultCase неизвестный action -> один caseReduсer
+- в обычном redux отрабатывала ВСЕГДА одна ветка switchCase, а в createRedcuer благодаря matchers может отработать несколько веток switchCase
+- если возникает ситуация отработки нескольких веток switchCase, то они будут выполнены через композицию в порядке их добавления программистом
+- сreateReducer под капотом использует Immer, поэтому caseReduсer можно писать в мутационном стиле
