@@ -168,8 +168,8 @@ const getCachedImg = weakRefCache(fetchImg);
 
 ```
 action                   actionCreator                    createAction
-{                        (type, payload) => {             (type, prepareAction) => 
-  type: string             type: string                     actionCreator плюс 
+{                        (payload) => {                   (type, prepareAction) => 
+  type: string             type: string //hardcoded         actionCreator плюс 
   payload: any             payload: any                     actionCreator.type,
 }                          meta: any                        actionCreator.toString(),
                            error: any                       actionCreator.match()
