@@ -189,3 +189,26 @@ ________________________________________________________________________________
 - в обычном redux отрабатывала ВСЕГДА одна ветка switchCase, а в createRedcuer благодаря matchers может отработать несколько веток switchCase
 - если возникает ситуация отработки нескольких веток switchCase, то они будут выполнены через композицию в порядке их добавления программистом
 - сreateReducer под капотом использует Immer, поэтому caseReduсer можно писать в мутационном стиле
+________________________________________________________________________________________________________________________
+- createAsyncThunk - идея автоматизированной обработки жизненного цикла асинхронной операции
+- createAsyncThunk принимает 3 параметра:
+  - string prefix as base for actionType (prefix/pending, prefix/reject, prefix/fulfilled)
+  - user callback (обычно асинхронный)
+  - options - доп. настройка asyncThunk
+- createAsyncThunk возвращает actionCreator, который при вызове возвращает функциональный action. Функциональный action - action, который является функцией. При dispatch перехыватывается redux thunk middleware, выполняется, после возвращает всегда resolved promise. Пример: `const result = await thunk()(dispatch, getState, null)`
+
+- Ключевые составляющие:
+  - dispatch action согласно жизненному циклу асинхронной операции pending/fulfilled/reject
+  - промисификация callback
+  - контроль асинхронной операции (прервать, не запустить)
+  - набор инструментов, расширяющих информацию о протекающей асинхронной операции (thunkApi, анализ возвращенной ошибки через action.meta, unwrap - распаковка данных, ...)
+
+- у любой асинхронной операции есть начало, время выполнения и завершение успешное/нет. И мы прикрепляем к этим моментам времени dispatches. dispatch pending/fulfilled/reject
+- промисификация - перевод callback на рельсы promise. Значит, что мы как программисты к результату callback (асинхронный/синхронный) операции привязываемся через promise. Мы модифицируем этот callback, чтобы он возвращал результат в promise
+- user callback принимает 2 параметра:
+  - payload для функционального action (см. выше). Пример: `fetchUserById = createAsyncThunk(...), fetchUserById(3), 3 - payload нашего функционального action`
+  - thunkApi - помогает осуществлять контроль асинхронной операции. Например, origDispatch, signal, rejectWithValue, .... Полный перечень см. доку
+- набор инструментов - часть берется из options, часть из thunkApi, часть из внутренней логики asyncThunk. Полный перечень см. доку. Например:
+  - idGenerator позволяет генерить уникальный requestId (часть options)
+  - extra from reduxThunk middleware (часть thunkApi)
+  - unwrap, unwrapResult позволяют удобного извлекать payload из возвращенного promise от нашей thunk (часть внутренней логики asyncThunk)
