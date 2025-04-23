@@ -212,3 +212,13 @@ ________________________________________________________________________________
   - idGenerator позволяет генерить уникальный requestId (часть options)
   - extra from reduxThunk middleware (часть thunkApi)
   - unwrap, unwrapResult позволяют удобного извлекать payload из возвращенного promise от нашей thunk (часть внутренней логики asyncThunk)
+ 
+    ________________________________________________________________________________________________________________________
+- createSlice - идея мини редакса.
+- createSlice принимает 3 параметра:
+   - name          (для actions type)
+   - initialState  (определяет форму slice)
+   - reducers      (в своей работе полагается на автоматически сгенерированные slice actions, куча способов задать reducers, см. доку)
+   - extraReducers (полагается на внешние НЕ slice actions)
+   - reducerPath   (путь хранения мини redux в глобальном redux)
+   - selectors     (пользовательская логика deriving данных)
