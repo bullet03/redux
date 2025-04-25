@@ -216,12 +216,12 @@ ________________________________________________________________________________
     ________________________________________________________________________________________________________________________
 - createSlice - идея мини редакса.
 - createSlice принимает 3 параметра:
-   - name          (для actions type)
-   - initialState  (определяет форму slice)
-   - reducers      (в своей работе полагается на автоматически сгенерированные slice actions, куча способов задать reducers, см. доку)
-   - extraReducers (полагается на внешние НЕ slice actions)
-   - reducerPath   (путь хранения мини redux в глобальном redux)
-   - selectors     (пользовательская логика deriving данных)
+   - name                (для actions type)
+   - initialState        (определяет форму slice)
+   - reducers            (в своей работе полагается на автоматически сгенерированные slice actions, куча способов задать reducers, см. доку)
+   - extraReducers       (полагается на внешние НЕ slice actions)
+   - reducerPath         (путь хранения мини redux в глобальном redux)
+   - selectors           (пользовательская логика deriving данных)
 - createSlice возвращает кучу барахла:
    - name                (префикс actions)
    - reducer             (очевидно)
@@ -233,3 +233,7 @@ ________________________________________________________________________________
    - selectors           (обёртка над композицией selectSlice(который идет по умолчанию в slice, по state[reducerPath]), userSelectors(options.selectors))
    - getSelectors        (обёртка над композицией selectSlice(мы его указываем лично сами), userSelectors(options.selectors))
    - injectInto          (под капотом эта команда переадресует нас на combineSlice.inject, см. туда)
+- Философия:
+- ![wrapped Selectors](/img/wrapped_selector.png)
+- state redux - едиеый источник информации в приложении. По итогу он содержит много данных, которыми трудно управлять. Возникает идея этот набор данных поделить. Slice - кусок state по какому-то признаку. Вместе с state наворчивают обвесы в виде reducer, actionCreators, selectors. createSlice позволяет автоматизировать создание slice с обвесами. reducer, actionCreators идут из redux и не требуют дополнительных объяснений
+- Selectors - на входе и на выходе createSlice - разные вещи!!! selectors на входе - пользовательская логика нарезки state самого slice. selectors на выходе - wrapped обертка (принимает rootState, не sliceState), которая применяет пользовательские входные selectors после selectSlice
