@@ -213,7 +213,7 @@ ________________________________________________________________________________
   - extra from reduxThunk middleware (часть thunkApi)
   - unwrap, unwrapResult позволяют удобного извлекать payload из возвращенного promise от нашей thunk (часть внутренней логики asyncThunk)
  
-    ________________________________________________________________________________________________________________________
+___________________________________________________________________________________________________________________________
 - createSlice - идея мини редакса.
 - createSlice принимает 3 параметра:
    - name                (для actions type)
@@ -228,7 +228,7 @@ ________________________________________________________________________________
    - actions             (набор actionCreators авматически сформированных по name)
    - caseReducers        (все caseReducers, включая взятые из reducers и extraReducers)
    - getInitialState     (очевидно)
-   - reducerPath         (ключ state)
+   - reducerPath         (ключ state, т.е. это по сути statePath, это кусок state в rootState, который изменяет данный reducer)
    - selectSlice         (логика селектирования root state, по умолчанию селектируется по state[reducerPath])
    - selectors           (обёртка над композицией selectSlice(который идет по умолчанию в slice, по state[reducerPath]), userSelectors(options.selectors))
    - getSelectors        (обёртка над композицией selectSlice(мы его указываем лично сами), userSelectors(options.selectors))
@@ -237,3 +237,13 @@ ________________________________________________________________________________
 - ![wrapped Selectors](/img/wrapped_selector.png)
 - state redux - единый источник информации в приложении. По итогу он содержит много данных, которыми трудно управлять. Возникает идея этот набор данных поделить. slice - reducer, который определяет кусок state. Акцент не на state, а на reducer. Основное, что возвращает slice - reducer, а остальное - обвесы. Вместе с state наворчивают обвесы в виде reducer, actionCreators, selectors. createSlice позволяет автоматизировать создание slice с обвесами. reducer, actionCreators идут из redux и не требуют дополнительных объяснений
 - selectors - на входе и на выходе createSlice - разные вещи!!! selectors на входе - пользовательская логика нарезки state самого slice. selectors на выходе - wrapped обертка (принимает rootState, не sliceState), которая применяет пользовательские входные selectors после selectSlice
+
+___________________________________________________________________________________________________________________________
+- combineSlice - то же, что и combineReducer, т.е. собрать кучу reducers в один корневой
+- combineSlice принимает:
+  - куча reducers может быть представлены в 2 форматах (sliceObjects/reducersMap). sliceObjects - slice1, slice2, .../ reducersMap - отдельный объект, где ключ - reducersPath, value - reducer
+- combineSlice возвращает:
+  - большой reducer с обвесами. Обвесы: inject (вставить slice потом), selector (wrapper, чтобы вставленный slice селектировал значение по умолчанию, полагается на работу Proxy state), withLazyLoadedSlices (добавление типизации ленивого slice)
+- Философия:
+  - автоматизация по отношению к slice
+  - возможность донастройки с помощью обвесов (см. возвращаемые значения)
